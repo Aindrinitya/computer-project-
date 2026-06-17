@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Management System</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(to right,#dbeafe,#f8fafc);
+}
+
+header{
+    background:#1e3a8a;
+    color:white;
+    text-align:center;
+    padding:25px;
+    font-size:40px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+.home{
+    text-align:center;
+    margin-top:60px;
+}
+
+.home button{
+    display:block;
+    width:350px;
+    margin:20px auto;
+    padding:22px;
+    font-size:32px;
+    font-weight:bold;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(to right,#2563eb,#3b82f6);
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.home button:hover{
+    transform:scale(1.05);
+}
+
+.section{
+    display:none;
+    padding:20px;
+}
+
+.back-btn{
+    background:#dc2626;
+    color:white;
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    margin-top:20px;
+}
+
+table,th,td{
+    border:1px solid #ccc;
+}
+
+th{
+    background:#2563eb;
+    color:white;
+    padding:15px;
+}
+
+td{
+    padding:10px;
+    text-align:center;
+}
+
+tr:nth-child(even){
+    background:#f1f5f9;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:15px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+.submit-btn{
+    background:#16a34a;
+    color:white;
+    padding:12px 25px;
+    border:none;
+    border-radius:8px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.result{
+    background:white;
+    margin-top:20px;
+    padding:20px;
+    border-radius:8px;
+}
+
+h2{
+    text-align:center;
+    color:#1e3a8a;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+LIBRARY MANAGEMENT SYSTEM
+</header>
+
+<!-- HOME PAGE -->
+
+<div class="home" id="homePage">
+
+<button onclick="showSection('librarySection')">
+Library Books
+</button>
+
+<button onclick="showSection('issueSection')">
+Issue Book
+</button>
+
+<button onclick="showSection('returnSection')">
+Return Book
+</button>
+
+<button onclick="showSection('recordSection')">
+Record Book
+</button>
+
+</div>
+
+<!-- LIBRARY BOOKS -->
+
+<div class="section" id="librarySection">
+
+<button class="back-btn" onclick="goHome()">
+Back
+</button>
+
+<h2>Library Books</h2>
+
+<table>
+
+<tr>
+<th>Book ID</th>
+<th>Book Name</th>
+<th>Author</th>
+<th>Price</th>
+</tr>
+
+<tbody id="bookTableBody"></tbody>
+
+</table>
+
+</div>
+
+<!-- ISSUE BOOK -->
+
+<div class="section" id="issueSection">
+
+<button class="back-btn" onclick="goHome()">
+Back
+</button>
+
+<h2>Issue Book</h2>
+
+<input type="text" id="studentName"
+placeholder="Enter Your Name">
+
+<input type="text" id="phoneNumber"
+placeholder="Enter Phone Number">
+
+<input type="text" id="bookName"
+placeholder="Enter Book Name">
+
+<input type="date" id="issueDate">
+
+<button class="submit-btn"
+onclick="issueBook()">
+
+Issue Book
+
+</button>
+
+<div id="issueResult" class="result"></div>
+
+</div>
+
+<!-- RETURN BOOK -->
+
+<div class="section" id="returnSection">
+
+<button class="back-btn" onclick="goHome()">
+Back
+</button>
+
+<h2>Return Book</h2>
+
+<input type="text" id="returnName"
+placeholder="Enter Your Name">
+
+<input type="text" id="returnBook"
+placeholder="Enter Book Name">
+
+<input type="date" id="returnDate">
+
+<button class="submit-btn"
+onclick="returnBook()">
+
+Return Book
+
+</button>
+
+<div id="returnResult" class="result"></div>
+
+</div>
+
+<!-- RECORD BOOK -->
+
+<div class="section" id="recordSection">
+
+<button class="back-btn" onclick="goHome()">
+Back
+</button>
+
+<h2>Book Records</h2>
+
+<table id="recordTable">
+
+<tr>
+<th>Name</th>
+<th>Phone Number</th>
+<th>Book Name</th>
+<th>Issue Date</th>
+<th>Return Date</th>
+<th>Status</th>
+<th>Fine</th>
+</tr>
+
+</table>
+
+</div>
+
+<script>
+
+/* BOOK LIST */
+
+const books = [
+
+["Harry Potter","J.K. Rowling"],
+["Alice in Wonderland","Lewis Carroll"],
+["Beauty and the Beast","Gabrielle-Suzanne"],
+["The Alchemist","Paulo Coelho"],
+["Wings of Fire","A.P.J Abdul Kalam"],
+["Rich Dad Poor Dad","Robert Kiyosaki"],
+["Romeo and Juliet","William Shakespeare"],
+["The Jungle Book","Rudyard Kipling"],
+["Pride and Prejudice","Jane Austen"],
+["The Hobbit","J.R.R Tolkien"]
+
+];
+
+const tableBody =
+document.getElementById("bookTableBody");
+
+/* GENERATE 200 BOOKS */
+
+for(let i=1;i<=200;i++){
+
+let book = books[(i-1)%books.length];
+
+let row = `
+<tr>
+<td>${1000+i}</td>
+<td>${book[0]} ${i}</td>
+<td>${book[1]}</td>
+<td>₹${300 + (i*5)}</td>
+</tr>
+`;
+
+tableBody.innerHTML += row;
+
+}
+
+/* STORE ISSUED BOOKS */
+
+let issuedBooks = [];
+
+/* SHOW SECTION */
+
+function showSection(sectionId){
+
+document.getElementById("homePage")
+.style.display="none";
+
+let sections =
+document.querySelectorAll(".section");
+
+sections.forEach(section=>{
+section.style.display="none";
+});
+
+document.getElementById(sectionId)
+.style.display="block";
+
+}
+
+/* GO HOME */
+
+function goHome(){
+
+let sections =
+document.querySelectorAll(".section");
+
+sections.forEach(section=>{
+section.style.display="none";
+});
+
+document.getElementById("homePage")
+.style.display="block";
+
+}
+
+/* ISSUE BOOK */
+
+function issueBook(){
+
+let name =
+document.getElementById("studentName").value;
+
+let phone =
+document.getElementById("phoneNumber").value;
+
+let book =
+document.getElementById("bookName").value;
+
+let issueDate =
+document.getElementById("issueDate").value;
+
+if(name==="" || phone==="" ||
+book==="" || issueDate===""){
+
+alert("Please fill all fields");
+return;
+
+}
+
+let issue = new Date(issueDate);
+
+let returnDate = new Date(issue);
+
+returnDate.setDate(returnDate.getDate()+7);
+
+let finalReturnDate =
+returnDate.toISOString().split('T')[0];
+
+issuedBooks.push({
+
+name:name,
+phone:phone,
+book:book,
+issueDate:issueDate,
+returnDate:finalReturnDate,
+status:"Not Returned",
+fine:0
+
+});
+
+document.getElementById("issueResult")
+.innerHTML =
+
+"<h3>Book Issued Successfully</h3>" +
+
+"<p><b>Name:</b> "+name+"</p>" +
+
+"<p><b>Book:</b> "+book+"</p>" +
+
+"<p><b>Issue Date:</b> "+issueDate+"</p>" +
+
+"<p><b>Return Date:</b> "+
+finalReturnDate+"</p>";
+
+updateRecordTable();
+
+}
+
+/* RETURN BOOK */
+
+function returnBook(){
+
+let name =
+document.getElementById("returnName").value;
+
+let book =
+document.getElementById("returnBook").value;
+
+let returnDateInput =
+document.getElementById("returnDate").value;
+
+let found = issuedBooks.find(
+
+item => item.name===name &&
+item.book===book &&
+item.status==="Not Returned"
+
+);
+
+if(!found){
+
+document.getElementById("returnResult")
+.innerHTML =
+"<h3>No Matching Record Found</h3>";
+
+return;
+
+}
+
+let returnDate =
+new Date(returnDateInput);
+
+let expectedDate =
+new Date(found.returnDate);
+
+let fine = 0;
+
+if(returnDate > expectedDate){
+
+let difference =
+returnDate - expectedDate;
+
+let lateDays =
+Math.ceil(difference/(1000*60*60*24));
+
+fine = lateDays * 10;
+
+}
+
+found.status = "Returned";
+found.fine = fine;
+
+document.getElementById("returnResult")
+.innerHTML =
+
+"<h3>Book Returned Successfully</h3>" +
+
+"<p><b>Name:</b> "+found.name+"</p>" +
+
+"<p><b>Book:</b> "+found.book+"</p>" +
+
+"<p><b>Fine:</b> ₹"+fine+"</p>";
+
+updateRecordTable();
+
+}
+
+/* UPDATE RECORD TABLE */
+
+function updateRecordTable(){
+
+let table =
+document.getElementById("recordTable");
+
+table.innerHTML = `
+
+<tr>
+<th>Name</th>
+<th>Phone Number</th>
+<th>Book Name</th>
+<th>Issue Date</th>
+<th>Return Date</th>
+<th>Status</th>
+<th>Fine</th>
+</tr>
+
+`;
+
+issuedBooks.forEach(item=>{
+
+let row = table.insertRow();
+
+row.insertCell(0).innerHTML = item.name;
+row.insertCell(1).innerHTML = item.phone;
+row.insertCell(2).innerHTML = item.book;
+row.insertCell(3).innerHTML = item.issueDate;
+row.insertCell(4).innerHTML = item.returnDate;
+row.insertCell(5).innerHTML = item.status;
+row.insertCell(6).innerHTML = "₹"+item.fine;
+
+});
+
+}
+
+</script>
+
+</body>
+</html>
